@@ -1,10 +1,19 @@
-name: 'Node 12 Template Action'
-description: 'Get started with Node actions'
-author: 'GitHub'
-inputs: 
-  myInput:
-    description: 'Input to use'
-    default: 'world'
+name: 'Firefox Addon Action'
+description: 'Upload your addon to Firefox'
+author: 'Thomas McNiven'
+inputs:
+  xpi:
+    description: 'Path to your addon\'s .xpi file'
+    required: true
+  manifest:
+    description: 'Path to your addon\'s manifest.json file'
+    required: true
+  api-key:
+    description: 'Firefox Addon API Key'
+    required: true
+  api-secret:
+    description: 'Firefox Addon API Secret'
+    required: true
 runs:
   using: 'node12'
   main: 'lib/main.js'
