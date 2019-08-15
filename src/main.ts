@@ -25,7 +25,7 @@ async function sendRequest(path: string, manifest: string, token: string): Promi
   // addon and version
   const addonBuffer = fs.readFileSync(path);
   const body = new FormData();
-  body.append('upload', new Blob([addonBuffer]));
+  body.append('upload', addonBuffer);
   body.append('version', version);
 
   // Send request
