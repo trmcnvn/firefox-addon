@@ -3,7 +3,7 @@ import path from 'path';
 import * as core from '@actions/core';
 import jwt from 'jsonwebtoken';
 import FormData from 'form-data';
-import https from 'https';
+import axios from 'axios';
 
 function generateJWT(key: string, secret: string): string {
   const issuedAt = Math.floor(Date.now() / 1000);
@@ -25,24 +25,21 @@ async function sendRequest(xpiPath: string, manifest: string, token: string): Pr
   core.debug(`found addon version: ${version}`);
 
   // addon and version
-  const addonBuffer = fs.readFileSync(path.resolve(xpiPath));
   const body = new FormData();
-  body.append('upload', addonBuffer);
+  body.append('upload', fs.createReadStream(path.resolve(xpiPath)));
   body.append('version', version);
 
   // Send request
-  const request = https.request({
-    method: 'put',
-    hostname: 'addons.mozilla.org',
-    path: '/api/v4/addons/',
+  const response = await axios.put('https://addons.mozilla.org/api/v4/addons/', body, {
     headers: {
       ...body.getHeaders(),
       Authorization: `JWT ${token}`
     }
   });
-  body.pipe(request).on('response', res => {
-    core.debug(JSON.stringify(res));
-  });
+  if (response.status >= 400) {
+    throw new Error(`Request to Mozilla failed with: ${response.statusText} (${response.status})`);
+  }
+  core.debug(`Response: ${response.data}`);
 }
 
 async function run() {
