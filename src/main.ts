@@ -30,15 +30,12 @@ async function sendRequest(xpiPath: string, manifest: string, token: string): Pr
   body.append('version', version);
 
   // Send request
-  const response = await axios.put('https://addons.mozilla.org/api/v4/addons/', body, {
+  const response = await axios.post('https://addons.mozilla.org/api/v4/addons/', body, {
     headers: {
       ...body.getHeaders(),
       Authorization: `JWT ${token}`
     }
   });
-  if (response.status >= 400) {
-    throw new Error(`Request to Mozilla failed with: ${response.statusText} (${response.status})`);
-  }
   core.debug(`Response: ${response.data}`);
 }
 
