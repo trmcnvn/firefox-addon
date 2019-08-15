@@ -41,7 +41,7 @@ async function sendRequest(xpiPath: string, manifest: string, token: string): Pr
     }
   });
   body.pipe(request).on('response', res => {
-    core.debug(res);
+    core.debug(JSON.stringify(res));
   });
 }
 
@@ -55,7 +55,7 @@ async function run() {
     const token = generateJWT(key, secret);
     const response = await sendRequest(path, manifest, token);
 
-    core.debug(`Published version ${response.version}`);
+    // core.debug(`Published version ${response.version}`);
   } catch (error) {
     core.setFailed(error.message);
   }
