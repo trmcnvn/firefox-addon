@@ -1,6 +1,8 @@
+import fs from 'fs';
 import * as core from '@actions/core';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
+import FormData from 'form-data';
+import fetch from 'node-fetch';
 
 function generateJWT(key: string, secret: string): string {
   const issuedAt = Math.floor(Date.now() / 1000);
@@ -20,11 +22,6 @@ async function sendRequest(path: string, manifest: string, token: string): Promi
   const manifestJson = JSON.parse(fs.readFileSync(manifest, 'utf8'));
   const version = manifestJson.version;
 
-  // request headers
-  const headers = new Headers();
-  headers.append('Authorization', `JWT ${token}`);
-  headers.append('Content-Type', 'multipart/form-data');
-
   // addon and version
   const addonBuffer = fs.readFileSync(path);
   const body = new FormData();
@@ -32,12 +29,14 @@ async function sendRequest(path: string, manifest: string, token: string): Promi
   body.append('version', version);
 
   // Send request
-  const request = new Request('https://addons.mozilla.org/api/v4/addons/', {
+  const response = await fetch('https://addons.mozilla.org/api/v4/addons/', {
     method: 'PUT',
-    headers,
+    headers: {
+      Authorization: `JWT ${token}`,
+      'Content-Type': 'multipart/form-data'
+    },
     body
   });
-  const response = await fetch(request);
   const json = await response.json();
   if (response.status != 201 && response.status != 202) {
     throw new Error(`${response.statusText}: ${json.error}`);

@@ -25,7 +25,9 @@
     "@actions/github": "^1.0.0",
     "@actions/io": "^1.0.0",
     "@actions/tool-cache": "^1.0.0",
+    "form-data": "^2.5.0",
     "jsonwebtoken": "^8.5.1",
+    "node-fetch": "^2.6.0",
     "semver": "^6.1.1"
   },
   "devDependencies": {
