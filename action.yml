@@ -2,10 +2,12 @@ name: 'Firefox Addon Action'
 description: 'Upload your addon to Firefox'
 author: 'Thomas McNiven'
 inputs:
+  uuid:
+    description: 'Your addons UUID as defined by Mozilla'
   xpi:
     description: 'Path to your addons .xpi file'
   manifest:
-    description: 'Path to your addons manifest.json file'
+    description: 'Path to your addons manifest.json file to read the version'
   api-key:
     description: 'Firefox Addon API Key'
   api-secret:

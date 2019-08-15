@@ -18,12 +18,22 @@ function generateJWT(key: string, secret: string): string {
   });
 }
 
-async function sendRequest(xpiPath: string, manifest: string, token: string): Promise<any> {
-  // read version from manifest
-  const manifestJson = JSON.parse(fs.readFileSync(path.resolve(manifest), 'utf8'));
-  const version = manifestJson.version;
-  core.debug(`found addon version: ${version}`);
+async function updateExistingAddon(uuid, xpiPath, version, token) {
+  // addon
+  const body = new FormData();
+  body.append('upload', fs.createReadStream(path.resolve(xpiPath)));
 
+  // Send request
+  const response = await axios.put(`https://addons.mozilla.org/api/v4/addons/${uuid}/versions/${version}`, body, {
+    headers: {
+      ...body.getHeaders(),
+      Authorization: `JWT ${token}`
+    }
+  });
+  core.debug(`Response: ${JSON.stringify(response.data)}`);
+}
+
+async function createNewAddon(xpiPath, version, token) {
   // addon and version
   const body = new FormData();
   body.append('upload', fs.createReadStream(path.resolve(xpiPath)));
@@ -36,20 +46,32 @@ async function sendRequest(xpiPath: string, manifest: string, token: string): Pr
       Authorization: `JWT ${token}`
     }
   });
-  core.debug(`Response: ${response.data}`);
+  core.debug(`Response: ${JSON.stringify(response.data)}`);
+}
+
+async function sendRequest(uuid: string, xpiPath: string, manifest: string, token: string): Promise<any> {
+  // read version from manifest
+  const manifestJson = JSON.parse(fs.readFileSync(path.resolve(manifest), 'utf8'));
+  const version = manifestJson.version;
+  core.debug(`found addon version: ${version}`);
+
+  if (uuid && uuid.length > 0) {
+    await updateExistingAddon(uuid, xpiPath, version, token);
+  } else {
+    await createNewAddon(xpiPath, version, token);
+  }
 }
 
 async function run() {
   try {
+    const uuid = core.getInput('uuid');
     const path = core.getInput('xpi', { required: true });
     const manifest = core.getInput('manifest', { required: true });
     const key = core.getInput('api-key', { required: true });
     const secret = core.getInput('api-secret', { required: true });
 
     const token = generateJWT(key, secret);
-    const response = await sendRequest(path, manifest, token);
-
-    // core.debug(`Published version ${response.version}`);
+    await sendRequest(uuid, path, manifest, token);
   } catch (error) {
     core.setFailed(error.message);
   }
