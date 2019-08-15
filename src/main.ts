@@ -18,13 +18,17 @@ function generateJWT(key: string, secret: string): string {
   });
 }
 
-async function updateExistingAddon(uuid, xpiPath, version, token) {
+async function updateExistingAddon(uuid: string, xpiPath: string, version: string, token: string) {
   // addon
   const body = new FormData();
   body.append('upload', fs.createReadStream(path.resolve(xpiPath)));
 
   // Send request
-  const response = await axios.put(`https://addons.mozilla.org/api/v4/addons/${uuid}/versions/${version}`, body, {
+  const uri = `https://addons.mozilla.org/api/v4/addons/${encodeURIComponent(uuid)}/versions/${encodeURIComponent(
+    version
+  )}/`;
+  core.debug(`URL: ${uri}`);
+  const response = await axios.put(uri, body, {
     headers: {
       ...body.getHeaders(),
       Authorization: `JWT ${token}`
@@ -33,14 +37,16 @@ async function updateExistingAddon(uuid, xpiPath, version, token) {
   core.debug(`Response: ${JSON.stringify(response.data)}`);
 }
 
-async function createNewAddon(xpiPath, version, token) {
+async function createNewAddon(xpiPath: string, version: string, token: string) {
   // addon and version
   const body = new FormData();
   body.append('upload', fs.createReadStream(path.resolve(xpiPath)));
   body.append('version', version);
 
   // Send request
-  const response = await axios.post('https://addons.mozilla.org/api/v4/addons/', body, {
+  const uri = 'https://addons.mozilla.org/api/v4/addons/';
+  core.debug(`URL: ${uri}`);
+  const response = await axios.post(uri, body, {
     headers: {
       ...body.getHeaders(),
       Authorization: `JWT ${token}`
