@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import * as core from '@actions/core';
 import jwt from 'jsonwebtoken';
 import FormData from 'form-data';
@@ -17,14 +18,14 @@ function generateJWT(key: string, secret: string): string {
   });
 }
 
-async function sendRequest(path: string, manifest: string, token: string): Promise<any> {
+async function sendRequest(xpiPath: string, manifest: string, token: string): Promise<any> {
   // read version from manifest
-  const manifestJson = JSON.parse(fs.readFileSync(manifest, 'utf8'));
+  const manifestJson = JSON.parse(fs.readFileSync(path.resolve(manifest), 'utf8'));
   const version = manifestJson.version;
   core.debug(`found addon version: ${version}`);
 
   // addon and version
-  const addonBuffer = fs.readFileSync(path);
+  const addonBuffer = fs.readFileSync(path.resolve(xpiPath));
   const body = new FormData();
   body.append('upload', addonBuffer);
   body.append('version', version);
