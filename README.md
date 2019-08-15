@@ -1,9 +1,24 @@
-# JavaScript Action Template
+# Firefox Addon Action
 
-This template offers an easy way to get started writing a javascript action with TypeScript compile time support, unit testing with Jest and using the GitHub Actions Toolkit.
+This action will publish your addon to the Firefox Addon store.
 
-## Getting Started
+## Usage
 
-See the walkthrough located [here](https://github.com/actions/toolkit/blob/master/docs/javascript-action.md).
+See [action.yml](action.yml)
 
-In addition to walking your through how to create an action, it also provides strategies for versioning, releasing and referencing your actions.
+```yaml
+steps:
+  - uses: trmcnvn/firefox-addon@v1
+    with:
+      # uuid is only necessary when updating an existing addon,
+      # omitting it will create a new addon
+      uuid: '{7b312f5e-9680-436b-acc1-9b09f60e8aaa}'
+      xpi: build/my-addon.xpi
+      manifest: manifest.json
+      api-key: ${{ secrets.FIREFOX_API_KEY }}
+      api-secret: ${{ secrets.FIREFOX_API_SECRET }}
+```
+
+## License
+
+The scripts and documentation in this project are released under the [MIT License](LICENSE)
