@@ -4,16 +4,12 @@ author: 'Thomas McNiven'
 inputs:
   xpi:
     description: 'Path to your addons .xpi file'
-    required: true
   manifest:
     description: 'Path to your addons manifest.json file'
-    required: true
   api-key:
     description: 'Firefox Addon API Key'
-    required: true
   api-secret:
     description: 'Firefox Addon API Secret'
-    required: true
 runs:
   using: 'node12'
   main: 'lib/main.js'
