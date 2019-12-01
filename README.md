@@ -2,6 +2,10 @@
 
 This action will publish your addon to the Firefox Addon store.
 
+## See Also
+
+[action-web-ext](https://github.com/kewisch/action-web-ext) is a GitHub action that wraps the `web-ext` tool from Mozilla, which provides additional features such as lint, build, and signing.
+
 ## Usage
 
 See [action.yml](action.yml)
