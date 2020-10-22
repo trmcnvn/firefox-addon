@@ -14,4 +14,4 @@ inputs:
     description: 'Firefox Addon API Secret'
 runs:
   using: 'node12'
-  main: 'lib/main.js'
+  main: 'dist/index.js'
